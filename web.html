@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TastyBite - Order Food Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f2f2;
+    }
+
+    header {
+      background-color: #ff6347;
+      color: white;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    nav {
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav a {
+      color: white;
+      padding: 1rem;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background-color: #444;
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .card h3 {
+      margin: 0.5rem 0;
+    }
+
+    .card button {
+      background-color: #ff6347;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .cart {
+      background: white;
+      padding: 1rem;
+      margin-top: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .cart-item {
+      margin: 0.5rem 0;
+    }
+
+    .place-order {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #qr-code {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🍴 TastyBite</h1>
+    <p>Your favorite food, delivered fast</p>
+  </header>
+
+  <nav>
+    <a href="#menu">Menu</a>
+    <a href="#cart">Cart</a>
+  </nav>
+
+  <div class="container" id="menu">
+    <h2>Our Menu</h2>
+    <div class="menu-grid">
+      <div class="card">
+        <h3>Pizza</h3>
+        <p>₹120</p>
+        <button onclick="addToCart('Pizza', 120)">Add to Cart</button>
+      </div>
+      <div class="card">
+        <h3>Burger</h3>
+        <p>₹80</p>
+        <button onclick="addToCart('Burger', 80)">Add to Cart</button>
+      </div>
+      <div class="card">
+        <h3>Fries</h3>
+        <p>₹50</p>
+        <button onclick="addToCart('Fries', 50)">Add to Cart</button>
+      </div>
+      <div class="card">
+        <h3>Milkshake</h3>
+        <p>₹60</p>
+        <button onclick="addToCart('Milkshake', 60)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="cart" id="cart">
+      <h2>Your Cart</h2>
+      <div id="cart-items"></div>
+      <p><strong>Total: ₹<span id="total">0</span></strong></p>
+      <button class="place-order" onclick="placeOrder()">Place Order</button>
+      <div id="qr-code"></div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 TastyBite. All rights reserved.
+  </footer>
+
+  <script>
+    const cartItems = [];
+    let total = 0;
+
+    function addToCart(item, price) {
+      cartItems.push({ item, price });
+      total += price;
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartDiv = document.getElementById('cart-items');
+      cartDiv.innerHTML = '';
+      cartItems.forEach(ci => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.textContent = `${ci.item} - ₹${ci.price}`;
+        cartDiv.appendChild(div);
+      });
+      document.getElementById('total').textContent = total;
+    }
+
+    function placeOrder() {
+      const qrDiv = document.getElementById('qr-code');
+      qrDiv.innerHTML = '';
+
+      if (cartItems.length === 0) {
+        alert("Your cart is empty!");
+      } else {
+        let orderSummary = "TastyBite Order:\n";
+        cartItems.forEach(ci => {
+          orderSummary += `${ci.item} - ₹${ci.price}\n`;
+        });
+        orderSummary += `Total: ₹${total}`;
+
+        const qrData = encodeURIComponent(orderSummary);
+        const qrURL = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${qrData}`;
+
+        const img = document.createElement('img');
+        img.src = qrURL;
+        img.alt = "Order QR Code";
+        qrDiv.appendChild(img);
+
+        alert("Order placed successfully!");
+
+        cartItems.length = 0;
+        total = 0;
+        updateCart();
+      }
+    }
+  </script>
+
+</body>
+</html>
